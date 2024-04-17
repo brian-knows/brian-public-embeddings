@@ -1,0 +1,25 @@
+{
+  "name": "brian-public-embeddings",
+  "version": "1.0.0",
+  "description": "This repository contains the code to store and retrieve embeddings on **Swarm**.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@ethersphere/bee-js": "^6.9.0",
+    "@libsql/client": "^0.6.0",
+    "chromadb": "^1.8.1",
+    "croner": "^8.0.2"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.1.0",
+    "typescript": "^5.4.5"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
