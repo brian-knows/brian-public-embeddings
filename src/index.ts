@@ -1,5 +1,5 @@
 import { Cron } from "croner";
-import { bee, chroma, getTursoClient } from "./lib";
+import { bee, beeDebug, chroma, getTursoClient } from "./lib";
 
 // load cron schedule from environment variable or default is once a month
 const CRON_SCHEDULE = process.env.CRON_SCHEDULE || "0 0 1 * *";
@@ -16,13 +16,13 @@ const publishEmbeddingsJob = new Cron(CRON_SCHEDULE as string, async () => {
 
   if (embeddings) {
     const filename = `embeddings-${Date.now()}`;
-    // TODO: check this, it doesn't seem to be working
-    // const postageBatchId = await bee.createPostageBatch("100", 17);
+    // TODO: calculate right parameters
+    const postageBatchId = await beeDebug.createPostageBatch("100", 17);
     console.log(
       `📦 [${new Date().toISOString()}] Uploading embeddings to Swarm...`
     );
     const result = await bee.uploadFile(
-      "",
+      postageBatchId,
       JSON.stringify({ embeddings }),
       filename,
       { pin: true }
