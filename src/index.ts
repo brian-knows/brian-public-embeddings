@@ -1,3 +1,7 @@
+import dotenv from "dotenv";
+
+dotenv.config();
+
 import { Cron } from "croner";
 import { bee, beeDebug, chroma, getTursoClient } from "./lib";
 import { IncludeEnum } from "chromadb";
@@ -18,30 +22,40 @@ const publishEmbeddingsFunction = async () => {
   });
 
   if (embeddings) {
-    const filename = `embeddings-${Date.now()}`;
+    const filename = `embeddings-${Date.now()}.json`;
     // 12856320000 is = 31 days in milliseconds times (21000 / 5)
-    const postageBatchId = await beeDebug.createPostageBatch("12856320000", 24);
+    const postageBatchId = await beeDebug.createPostageBatch("12856320000", 20);
     console.log(
       `📦 [${new Date().toISOString()}] Uploading embeddings to Swarm...`
     );
+
+    const jsonFileArray = new TextEncoder().encode(
+      JSON.stringify({ embeddings })
+    );
+
     const result = await bee.uploadFile(
       postageBatchId,
-      JSON.stringify({ embeddings }),
+      jsonFileArray,
       filename,
-      { pin: true }
+      {
+        pin: true,
+      }
     );
-    const cid = result.cid();
-    console.log(`✅ Embeddings uploaded to Swarm. CID: ${cid}`);
+
+    const { reference } = result;
+    console.log(`✅ Embeddings uploaded to Swarm. Reference: ${reference}`);
 
     const turso = getTursoClient();
     if (turso) {
-      console.log(`📦 [${new Date().toISOString()}] Storing CID in Turso...`);
+      console.log(
+        `📦 [${new Date().toISOString()}] Storing reference in Turso...`
+      );
       const operations = [
-        "CREATE TABLE IF NOT EXISTS cids (cid TEXT, timestamp TEXT)",
-        `INSERT INTO cids (cid, timestamp) VALUES ('${cid}', '${new Date().toISOString()}')`,
+        "CREATE TABLE IF NOT EXISTS embeddings_files (id INTEGER PRIMARY KEY, value TEXT, timestamp TEXT)",
+        `INSERT INTO embeddings_files (id, value, timestamp) VALUES (NULL, '${reference}', '${new Date().toISOString()}')`,
       ];
       await turso.batch(operations, "write");
-      console.log(`✅ CID stored in Turso.`);
+      console.log(`✅ Reference stored in Turso.`);
       return;
     }
   }
