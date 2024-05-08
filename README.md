@@ -5,6 +5,7 @@ This repository contains the code to store and retrieve embeddings on **Swarm**.
 ## ❓ Why this repository?
 
 Public embeddings play a significant role in various fields and applications, and these are the reasons why we wanted to create such repository:
+
 - **Knowledge Sharing**: Public embeddings facilitate the sharing of knowledge and information in a structured and computationally efficient way. They encode semantic information, making it easier to understand and utilize data across different applications;
 - **Interoperability**: Public embeddings provide a common framework for interoperability among diverse systems, platforms, and languages. They enable data and models to be understood and used consistently across the AI and machine learning community;
 - **Facilitating Research**: Researchers in natural language processing (NLP), computer vision, and other AI domains heavily rely on pre-trained embeddings. A repository of public embeddings can serve as a valuable resource for researchers to access and compare different embeddings for their experiments and models;
@@ -19,11 +20,52 @@ Storing and retrieving public embeddings on **Swarm** serves as a catalyst for a
 
 ## 📦 Installation
 
-> 🚧 Work in Progress 🚧
+You need to clone this repository to your local machine first. Then, in order to install the required dependencies, you can run the following command:
+
+```bash
+npm install # using npm
+# or
+yarn install # using yarn
+# or
+pnpm install # using pnpm
+```
+
+You need to populate the `.env` file with the following environment variables:
+
+```bash
+TURSO_DB="" # optional
+TURSO_AUTH_TOKEN="" # optional
+CHROMA_NODE_URL=""
+BEE_NODE_URL=""
+BEE_NODE_DEBUG_URL=""
+DEBUG="" # optional
+```
+
+The Turso environment variables are optional in case you want to save the Swarm references to a database. The `CHROMA_NODE_URL` is the URL of the Chroma node (where the embeddings are retrieved), and the `BEE_NODE_URL` and `BEE_NODE_DEBUG_URL` are the URLs of the Bee nodes. The `DEBUG` environment variable is optional and can be used to start the cron job immediately for testing purposes.
 
 ## 🛠️ Usage
 
-> 🚧 Work in Progress 🚧
+You need to build the typescript code into javascript by running:
+
+```bash
+npm run build # using npm
+# or
+yarn build # using yarn
+# or
+pnpm build # using pnpm
+```
+
+Then, you can start the cron job by running:
+
+```bash
+npm run start # using npm
+# or
+yarn start # using yarn
+# or
+pnpm start # using pnpm
+```
+
+If you enabled the debug mode, it will start immediately, otherwise it will start the first day of each month. You can change how often the cron job runs by adding a `CRON_SCHEDULE` environment variable with your desired cron schedule string.
 
 ## 📜 ETHSwarm Grant
 

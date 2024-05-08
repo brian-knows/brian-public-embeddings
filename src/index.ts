@@ -45,18 +45,20 @@ const publishEmbeddingsFunction = async () => {
     const { reference } = result;
     console.log(`✅ Embeddings uploaded to Swarm. Reference: ${reference}`);
 
-    const turso = getTursoClient();
-    if (turso) {
-      console.log(
-        `📦 [${new Date().toISOString()}] Storing reference in Turso...`
-      );
-      const operations = [
-        "CREATE TABLE IF NOT EXISTS embeddings_files (id INTEGER PRIMARY KEY, value TEXT, timestamp TEXT)",
-        `INSERT INTO embeddings_files (id, value, timestamp) VALUES (NULL, '${reference}', '${new Date().toISOString()}')`,
-      ];
-      await turso.batch(operations, "write");
-      console.log(`✅ Reference stored in Turso.`);
-      return;
+    if (process.env.TURSO_DB) {
+      const turso = getTursoClient();
+      if (turso) {
+        console.log(
+          `📦 [${new Date().toISOString()}] Storing reference in Turso...`
+        );
+        const operations = [
+          "CREATE TABLE IF NOT EXISTS embeddings_files (id INTEGER PRIMARY KEY, value TEXT, timestamp TEXT)",
+          `INSERT INTO embeddings_files (id, value, timestamp) VALUES (NULL, '${reference}', '${new Date().toISOString()}')`,
+        ];
+        await turso.batch(operations, "write");
+        console.log(`✅ Reference stored in Turso.`);
+        return;
+      }
     }
   }
 
