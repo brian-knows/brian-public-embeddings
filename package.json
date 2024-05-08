@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@ethersphere/bee-js": "^6.9.0",
+    "@ethersphere/bee-js": "^6.9.1",
     "@libsql/client": "^0.6.0",
     "chromadb": "^1.8.1",
     "croner": "^8.0.2"

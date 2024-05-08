@@ -1,10 +1,11 @@
 import { Cron } from "croner";
 import { bee, beeDebug, chroma, getTursoClient } from "./lib";
+import { IncludeEnum } from "chromadb";
 
 // load cron schedule from environment variable or default is once a month
 const CRON_SCHEDULE = process.env.CRON_SCHEDULE || "0 0 1 * *";
 
-const publishEmbeddingsJob = new Cron(CRON_SCHEDULE as string, async () => {
+const publishEmbeddingsFunction = async () => {
   console.log(`⚡️ [${new Date().toISOString()}] Job started.`);
 
   const publicCollection = await chroma.getCollection({
@@ -12,12 +13,14 @@ const publishEmbeddingsJob = new Cron(CRON_SCHEDULE as string, async () => {
   });
 
   console.log(`📦 [${new Date().toISOString()}] Fetching embeddings...`);
-  const { embeddings } = await publicCollection.get({});
+  const { embeddings } = await publicCollection.get({
+    include: [IncludeEnum.Embeddings],
+  });
 
   if (embeddings) {
     const filename = `embeddings-${Date.now()}`;
-    // TODO: calculate right parameters
-    const postageBatchId = await beeDebug.createPostageBatch("100", 17);
+    // 12856320000 is = 31 days in milliseconds times (21000 / 5)
+    const postageBatchId = await beeDebug.createPostageBatch("12856320000", 24);
     console.log(
       `📦 [${new Date().toISOString()}] Uploading embeddings to Swarm...`
     );
@@ -44,4 +47,13 @@ const publishEmbeddingsJob = new Cron(CRON_SCHEDULE as string, async () => {
   }
 
   console.log(`❌ No embeddings found. Exiting...`);
-});
+};
+
+const publishEmbeddingsJob = new Cron(
+  CRON_SCHEDULE as string,
+  publishEmbeddingsFunction
+);
+
+if (process.env.DEBUG) {
+  publishEmbeddingsFunction();
+}
