@@ -4,7 +4,6 @@
   "description": "This repository contains the code to store and retrieve embeddings on **Swarm**.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npx tsc",
     "start": "node dist/index.js"
   },
